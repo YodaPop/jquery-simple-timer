@@ -1,9 +1,9 @@
 /**
 * @name             Simple Timer
 * @descripton       Adds a timer to an element with an assigned interval and
-*                   callback function.
+*                   duration.
 *
-* @version          0.1.0
+* @version          0.1.1
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
@@ -199,7 +199,8 @@
 			*/
 			var settings = $.extend( true, {
 				increment       :   1000,
-				duration        :   5000,
+				duration        :   1000,
+				autostart       :   false,
 				// callbacks
 				onComplete      :   false,
 				onIncrement     :   false,
@@ -219,6 +220,10 @@
 			return this.each(function(){
 				// save data
 				$(this).data('SimpleTimer.settings', settings);
+				// autostart the timer
+				if ( settings.autostart ) {
+					methods.start.apply($(this));
+				}
 			});
 		},
 

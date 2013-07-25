@@ -96,8 +96,8 @@ p {
 			<p class="header">Timer #1</p>
 			<p class="sub-header">Settings<p>
 			<ul>
-				<li>Increment: 1000 (1 second)</li>
-				<li>Duration: 5000 (5 second)</li>
+				<li>increment: 1000 (1 second)</li>
+				<li>duration: 5000 (5 second)</li>
 			</ul>
 			<div class="container-digits">
 				<div id="tens1" class="digit">0</div>
@@ -114,8 +114,8 @@ p {
 			<p class="header">Timer #2</p>
 			<p class="sub-header">Settings<p>
 			<ul>
-				<li>Increment: 100 (1/10 second)</li>
-				<li>Duration: 1000 (1 second)</li>
+				<li>increment: 100 (1/10 second)</li>
+				<li>duration: 1000 (1 second)</li>
 			</ul>
 			<div class="container-digits">
 				<div id="tens2" class="digit">0</div>
@@ -132,8 +132,9 @@ p {
 			<p class="header">Timer #3</p>
 			<p class="sub-header">Settings<p>
 			<ul>
-				<li>Increment: 10 (1/100 second)</li>
-				<li>Duration: 2000 (2 second)</li>
+				<li>increment: 10 (1/100 second)</li>
+				<li>duration: 2000 (2 second)</li>
+				<li>autostart: true</li>
 			</ul>
 			<div class="container-digits">
 				<div id="tens3" class="digit">0</div>
@@ -200,6 +201,7 @@ $('#timer2').simpleTimer({
 $('#timer3').simpleTimer({
 	increment   :   10,
 	duration    :   2000,
+	autostart   :   true,
 	onIncrement :   onIncrement,
 	onReset     :   onReset,
 });
