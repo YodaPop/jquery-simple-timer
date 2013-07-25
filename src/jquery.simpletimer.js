@@ -80,7 +80,7 @@
 		all : function( method ) {
 			// filter out the uninitialized
 			var filtered = this.filter(function() {
-				if( $(this).data('SimpleTimer.settings') === null ) {
+				if( $(this).data('SimpleTimer.settings') === undefined ) {
 					$.error('Simple Timer Error: method "' + method + '" was ' +
 						'called on an element which has not been initialized.');
 
@@ -177,7 +177,7 @@
 		},
 	},
 
-	//publicly accessible methods $('div').simpleSlides('methodName')
+	// publicly accessible methods $('div').simpleSlides('methodName')
 
 	methods = {
 
@@ -222,6 +222,22 @@
 			});
 		},
 
+		/**
+		 * Destroys the timer by deleting the settings attached to the DOM
+		 * element.
+		 *
+		 * @method destroy
+		 * @return {Object} The jQuery object's from which the method was called
+		 **/
+		destroy : function() {
+			// apply to each element
+			return this.each( function() {
+				// reset plugin
+				methods.reset.apply($(this));
+				// remove previously stored data
+				$(this).removeData('SimpleTimer.settings');
+			});
+		},
 
 		/**
 		 * Starts the timer.
@@ -293,7 +309,7 @@
 
 	};
 
-	//jQuery plugin
+	// jQuery plugin
 
 	$.fn.simpleTimer = function( method ) {
 		//call the methods from the methods variable
