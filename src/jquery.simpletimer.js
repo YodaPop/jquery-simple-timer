@@ -19,26 +19,25 @@
 	 * Starts a timeout that lasts for the plugin's increment value.
 	 *
 	 * @method _time
-	 * @param {Object} The DOM element the plugin was initialized on
 	 * @param {Object} The settings the plugin was initialized with
 	 * @private
 	 **/
-	function _time( el, settings ) {
+	var _time = function ( settings ) {
+		var el = this;
 		// set timeout
 		settings.timeout = setTimeout( function() {
-			_count(el, settings);
+			_count.call(el, settings);
 		}, settings.increment);
-	}
+	},
 
 	/**
 	 * Counts the increments until the plugin's duration is reached.
 	 *
 	 * @method _count
-	 * @param {Object} The DOM element the plugin was initialized on
 	 * @param {Object} The settings the plugin was initialized with
 	 * @private
 	 **/
-	function _count( el, settings ) {
+	_count = function ( settings ) {
 		// increase count
 		settings.count += settings.increment;
 		// set percent to the nearest 1000th
@@ -46,7 +45,7 @@
 			settings.duration * 1000) / 1000;
 		// on increment event
 		if( settings.onIncrement ) {
-			settings.onIncrement.apply(el, settings);
+			settings.onIncrement.call(this, settings);
 		}
 		// check complete
 		if( settings.count >= settings.duration ) {
@@ -54,30 +53,30 @@
 			settings.percent = 1;
 			// on complete event
 			if( settings.onComplete ) {
-				settings.onComplete.apply(el, settings);
+				settings.onComplete.call(this, settings);
 			}
 			// stop timer
-			methods.stop.apply($(el));
+			methods.stop.call($(this));
 
 			return true;
 		}
 		// timeout
-		_time(el, settings);
-	}
+		_time.call(this, settings);
+	},
 
 	// filters applied before method calls
 
-	var filters = {
+	filters = {
 
 		/**
 		 * A filter applied before all methods are called. The filter ensures
 		 * that all of the jQuery objects selected were initialized.
 		 *
-		 * @method all
+		 * @method filters.methods
 		 * @param {Object} method The method about to be filtered
 		 * @return {Object} The jQuery object from which the method was called
 		 **/
-		all : function( method ) {
+		methods : function( method ) {
 			// filter out the uninitialized
 			var filtered = this.filter(function() {
 				if( $(this).data('SimpleTimer.settings') === undefined ) {
@@ -95,14 +94,10 @@
 				// call method
 				if( filters[method] ) {
 					// filtered method
-					filters[method].apply( filtered,
-						Array.prototype.slice.call( arguments, 1 )
-					);
+					filters[method].apply( filtered, arguments );
 				}else {
 					// unfiltered method
-					methods[method].apply( filtered,
-						Array.prototype.slice.call( arguments, 1 )
-					);
+					methods[method].apply( filtered, arguments );
 				}
 			}
 
@@ -114,7 +109,7 @@
 		 * A filter applied before the start method is called. The filter
 		 * checks to see if any of the elements' timers are already timing.
 		 *
-		 * @method start
+		 * @method filters.start
 		 * @return {Boolean} Returns true if some of the selected jQuery objects
 		 * passed the filter, false if none of the objects passed
 		 **/
@@ -139,7 +134,7 @@
 			}
 
 			// call start
-			methods.start.call(filtered);
+			methods.start.apply(filtered, arguments);
 
 			return true;
 		},
@@ -148,7 +143,7 @@
 		 * A filter applied before the stop method is called. The filter
 		 * checks to see if any of the elements' timers are already timing.
 		 *
-		 * @method stop
+		 * @method filters.stop
 		 * @return {Boolean} Returns true if some of the selected jQuery objects
 		 * passed the filter, false if none of the objects passed
 		 **/
@@ -169,7 +164,7 @@
 			}
 
 			// call stop
-			methods.stop.call(filtered);
+			methods.stop.apply(filtered, arguments);
 
 			return true;
 		},
@@ -183,7 +178,7 @@
 		 * The initialization method. Used to set the properties of the timer
 		 * and attach the data to the selected jQuery objects.
 		 *
-		 * @method init
+		 * @method methods.init
 		 * @param {Object} options An object used to set publicly accessible
 		 * options such as the timer's increment, duration, and callbacks (see
 		 * README.md for details)
@@ -212,7 +207,6 @@
 				count           :   0,
 				percent         :   0,
 				isTiming        :   false,
-				isCounting      :   false,
 			});
 
 			return this.each(function(){
@@ -220,7 +214,7 @@
 				$(this).data('SimpleTimer.settings', settings);
 				// autostart the timer
 				if ( settings.autostart ) {
-					methods.start.apply($(this));
+					methods.start.call($(this));
 				}
 			});
 		},
@@ -229,14 +223,14 @@
 		 * Destroys the timer by deleting the settings attached to the DOM
 		 * element.
 		 *
-		 * @method destroy
+		 * @method methods.destroy
 		 * @return {Object} The jQuery object's from which the method was called
 		 **/
 		destroy : function() {
 			// apply to each element
 			return this.each( function() {
 				// reset plugin
-				methods.reset.apply($(this));
+				methods.reset.call($(this));
 				// remove previously stored data
 				$(this).removeData('SimpleTimer.settings');
 			});
@@ -245,7 +239,7 @@
 		/**
 		 * Starts the timer.
 		 *
-		 * @method start
+		 * @method methods.start
 		 * @return {Object} The jQuery object's from which the method was called
 		 **/
 		start : function() {
@@ -257,17 +251,17 @@
 				settings.isTiming = true;
 				// on start event
 				if ( settings.onStart ) {
-					settings.onStart.apply(this, settings);
+					settings.onStart.call(this, settings);
 				}
 				// start timing
-				_time(this, settings);
+				_time.call(this, settings);
 			});
 		},
 
 		/**
 		 * Stops the timer.
 		 *
-		 * @method stop
+		 * @method methods.stop
 		 * @return {Object} The jQuery object's from which the method was called
 		 **/
 		stop : function() {
@@ -281,7 +275,7 @@
 				settings.isTiming = false;
 				// on stop event
 				if ( settings.onStop ) {
-					settings.onStop.apply(this, settings);
+					settings.onStop.call(this, settings);
 				}
 			});
 		},
@@ -289,7 +283,7 @@
 		/**
 		 * Resets the timer. The timer's count is reset to 0.
 		 *
-		 * @method reset
+		 * @method methods.reset
 		 * @return {Object} The jQuery object's from which the method was called
 		 **/
 		reset : function() {
@@ -305,7 +299,7 @@
 				settings.percent = 0;
 				// on reset event
 				if ( settings.onReset ) {
-					settings.onReset.apply(this, settings);
+					settings.onReset.call(this, settings);
 				}
 			});
 		},
@@ -317,7 +311,7 @@
 	$.fn.simpleTimer = function( method ) {
 		//call the methods from the methods variable
 		if ( methods[method] ) {
-			return filters.all.apply( this, arguments );
+			return filters.methods.apply( this, arguments );
 		} else if ( typeof method === 'object' || ! method ) {
 			return methods.init.apply( this, arguments );
 		} else {
