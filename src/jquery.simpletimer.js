@@ -91,21 +91,19 @@
 			});
 
 			// check filtered before proceeding
-			if( filtered.length === 0 ) {
-				return false;
-			}
-
-			// call method
-			if( filters[method] ) {
-				// filtered method
-				filters[method].apply( filtered,
-					Array.prototype.slice.call( arguments, 1 )
-				);
-			}else {
-				// unfiltered method
-				methods[method].apply( filtered,
-					Array.prototype.slice.call( arguments, 1 )
-				);
+			if( filtered.length > 0 ) {
+				// call method
+				if( filters[method] ) {
+					// filtered method
+					filters[method].apply( filtered,
+						Array.prototype.slice.call( arguments, 1 )
+					);
+				}else {
+					// unfiltered method
+					methods[method].apply( filtered,
+						Array.prototype.slice.call( arguments, 1 )
+					);
+				}
 			}
 
 			// return the jQuery object to keep the method chainable
