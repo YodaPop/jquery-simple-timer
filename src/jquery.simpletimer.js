@@ -3,7 +3,7 @@
 * @descripton       Adds a timer to an element with an assigned interval and
 *                   duration.
 *
-* @version          0.1.1
+* @version          0.1.2
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
@@ -25,9 +25,11 @@
 	var _time = function ( settings ) {
 		var el = this;
 		// set timeout
-		settings.timeout = setTimeout( function() {
-			_count.call(el, settings);
-		}, settings.increment);
+		if ( settings.isTiming ) {
+			settings.timeout = setTimeout( function() {
+				_count.call(el, settings);
+			}, settings.increment);
+		}
 	},
 
 	/**
@@ -220,23 +222,6 @@
 		},
 
 		/**
-		 * Destroys the timer by deleting the settings attached to the DOM
-		 * element.
-		 *
-		 * @method methods.destroy
-		 * @return {Object} The jQuery object's from which the method was called
-		 **/
-		destroy : function() {
-			// apply to each element
-			return this.each( function() {
-				// reset plugin
-				methods.reset.call($(this));
-				// remove previously stored data
-				$(this).removeData('SimpleTimer.settings');
-			});
-		},
-
-		/**
 		 * Starts the timer.
 		 *
 		 * @method methods.start
@@ -292,7 +277,7 @@
 				// retrieve settings
 				var settings = $(this).data('SimpleTimer.settings');
 				// stop the timer
-				$(this).simpleTimer('stop');
+				methods.stop.call($(this));
 				// reset the count
 				settings.count = 0;
 				// reset the percent
@@ -301,6 +286,23 @@
 				if ( settings.onReset ) {
 					settings.onReset.call(this, settings);
 				}
+			});
+		},
+
+		/**
+		 * Destroys the timer by deleting the settings attached to the DOM
+		 * element.
+		 *
+		 * @method methods.destroy
+		 * @return {Object} The jQuery object's from which the method was called
+		 **/
+		destroy : function() {
+			// apply to each element
+			return this.each( function() {
+				// reset plugin
+				methods.reset.call($(this));
+				// remove previously stored data
+				$(this).removeData('SimpleTimer.settings');
 			});
 		},
 
