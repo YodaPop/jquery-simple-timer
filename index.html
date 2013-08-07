@@ -62,6 +62,12 @@ p {
 	padding:0px 10px;
 }
 
+.percent {
+	font-size:40px;
+	border:1px solid white;
+	padding:0px 10px;
+}
+
 .buttons {
 	height:30px;
 	width:170px;
@@ -137,8 +143,7 @@ p {
 				<li>autostart: true</li>
 			</ul>
 			<div class="container-digits">
-				<div id="tens3" class="digit">0</div>
-				<div id="ones3" class="digit">0</div>
+				<div class="percent">0%</div>
 			</div>
 			<div class="buttons">
 				<input type="button" value="Start" onClick="$('#timer3').simpleTimer('start')" />
@@ -183,6 +188,17 @@ var onReset = function () {
 	$(this).find('.digit').text(0);
 };
 
+var onIncrementPercent = function() {
+	var percent = $(this).simpleTimer('getPercent');
+
+	// set percent
+	$(this).find('.percent').text(Math.round(percent * 100) + '%');
+};
+
+var onResetPercent = function () {
+	$(this).find('.percent').text('0%');
+};
+
 // timer 1
 $('#timer1').simpleTimer({
 	increment   :   1000,
@@ -202,8 +218,8 @@ $('#timer3').simpleTimer({
 	increment   :   10,
 	duration    :   2000,
 	autostart   :   true,
-	onIncrement :   onIncrement,
-	onReset     :   onReset,
+	onIncrement :   onIncrementPercent,
+	onReset     :   onResetPercent,
 });
 /*]]>*/
 </script>
