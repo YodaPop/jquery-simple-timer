@@ -3,7 +3,7 @@
 * @descripton       A jQuery plugin that adds a timer to an element with an
 *                   assigned interval and duration.
 *
-* @version          0.1.3
+* @version          0.1.4
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
@@ -44,7 +44,7 @@
 	 **/
 	_time = function ( settings ) {
 		// set timeout
-		if ( settings.isTiming ) {
+		if ( settings.timeout !== false ) {
 			var el = this;
 			settings.timeout = setTimeout( function() {
 				_count.call(el, settings);
@@ -83,8 +83,8 @@
 
 	/**
 	 * Getter functions called using
-	 * $(selector).simpleTimer('get' + methodName). These methods are not
-	 * chainable.
+	 * $(selector).simpleTimer('get' + methodName). WARNING: These methods are
+	 * not chainable.
 	 */
 	get = {
 
@@ -131,6 +131,7 @@
 				// return for one element
 				return pcs[0];
 			}else {
+				// return for multiple selected elements
 				return pcs;
 			}
 		},
@@ -193,7 +194,7 @@
 			var filtered = this.filter(function() {
 				var settings = $(this).data('SimpleTimer.settings');
 				// checks if the timer has already been started
-				if ( settings.isTiming ) {
+				if ( settings.timeout !== false ) {
 					return false;
 				}
 				// checks if the timer has already run its duration
@@ -228,7 +229,7 @@
 			var filtered = this.filter(function() {
 				var settings = $(this).data('SimpleTimer.settings');
 				// checks if the timer has already been stopped
-				if ( !settings.isTiming ) {
+				if ( settings.timeout === false ) {
 					return false;
 				}
 
@@ -272,12 +273,11 @@
 			* provided.
 			*/
 			var settings = {};
-			settings = $.extend( true, settings, _settings, options,
+			$.extend( true, settings, _settings, options,
 			// private settings
 			{
-				timeout         :   null,
+				timeout         :   false,
 				count           :   0,
-				isTiming        :   false,
 			});
 
 			return this.each(function(){
@@ -302,8 +302,8 @@
 			return this.each( function() {
 				// retrieve settings
 				var settings = $(this).data('SimpleTimer.settings');
-				// set isTiming
-				settings.isTiming = true;
+				// start timing boolean
+				settings.timeout = true;
 				// on start event
 				if ( settings.onStart ) {
 					settings.onStart.call(this, settings);
@@ -327,8 +327,8 @@
 				var settings = $(this).data('SimpleTimer.settings');
 				// clear timeout
 				clearTimeout(settings.timeout);
-				// stop timing
-				settings.isTiming = false;
+				// stop timing boolean
+				settings.timeout = false;
 				// on stop event
 				if ( settings.onStop ) {
 					settings.onStop.call(this, settings);
