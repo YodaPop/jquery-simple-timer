@@ -3,11 +3,12 @@
 * @descripton       A jQuery plugin that adds a timer to an element with an
 *                   assigned interval and duration.
 *
-* @version          0.1.4
+* @version          0.1.5
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
 * @author-email     ben@bengullotti.com
+* @author-site      https://github.com/YodaPop
 *
 * @license          MIT License -
 *                   http://www.opensource.org/licenses/mit-license.php
@@ -83,14 +84,15 @@
 
 	/**
 	 * Getter functions called using
-	 * $(selector).simpleTimer('get' + methodName). WARNING: These methods are
-	 * not chainable.
+	 * $(selector).simpleTimer('get' + methodName) or
+	 * $.simpleTimer('get' + methodName)
+	 * WARNING: These methods are not chainable.
 	 */
 	get = {
 
 		/**
 		 * Get the private default settings object used to initialize the
-		 * public settings of the timer plugin.
+		 * public settings of the plugin.
 		 *
 		 * @method get.defaultSettings
 		 * @return {Object} The default settings object
@@ -113,26 +115,30 @@
 		 * defaults to false.
 		 **/
 		percent : function() {
+			// no elements were selected
+			if ( this.length === 0 ) {
+				return false;
+			}
 			// the array of percentages
-			var pcs = [];
+			var arr = [];
 			// loop through the elements
-			this.each(function() {
+			$(this).each(function() {
 				var settings = $(this).data('SimpleTimer.settings');
 				if ( settings === undefined ) {
-					pcs.push(false);
+					arr.push(false);
 				}else {
 					// set percent to the nearest 1000th
-					pcs.push(Math.round(settings.count /
+					arr.push(Math.round(settings.count /
 						settings.duration * 1000) / 1000);
 				}
 			});
 
 			if ( this.length === 1 ) {
 				// return for one element
-				return pcs[0];
+				return arr[0];
 			}else {
 				// return for multiple selected elements
-				return pcs;
+				return arr;
 			}
 		},
 
@@ -272,8 +278,7 @@
 			* Create some defaults. Extend them with any options that were
 			* provided.
 			*/
-			var settings = {};
-			$.extend( true, settings, _settings, options,
+			var settings = $.extend( true, {}, _settings, options,
 			// private settings
 			{
 				timeout         :   false,
@@ -401,7 +406,7 @@
 
 	};
 
-	// jQuery plugin
+	// jQuery selected
 
 	$.fn.simpleTimer = function( method ) {
 		if ( typeof method === 'string' ) {
@@ -431,4 +436,25 @@
 			'least 1 paramater passed for inititialization. The first ' +
 			'paramater must be of type "string" or "object"');
 	};
+
+	// jQuery object (get functions only)
+
+	$.simpleTimer = function( method ) {
+		if ( typeof method === 'string' &&
+			 method.substr(0, 3) === 'get') {
+			method = method.substr(3, 1).toLowerCase() +
+				method.substr(4);
+			if ( get[method] ) {
+				// getter functions (not chainable)
+				return get[method].call([]);
+			}else {
+				$.error('Simple Timer Error: getter function ' +  method +
+					' does not exist.');
+			}
+		}
+		// general exception
+		$.error('Simple Timer Error: direct calls to simpleTimer only work ' +
+			'with get functions');
+	};
+
 })(jQuery);
