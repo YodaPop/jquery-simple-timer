@@ -103,10 +103,85 @@
 		},
 
 		/**
-		 * Get the percentage  of how close the timer is to its duration. The
-		 * percentage is calculated based on the increment and the duration.
-		 * Thus, a smaller increment relative to the duration will yield a more
-		 * accurate percentage.
+		 * Get a specific setting passed in as a string.
+		 *
+		 * @method get.settings
+		 * @param {String} The name of a specific setting
+		 * @return {Mixed} Returns the value of the settings or, if there is
+		 * more than one element selected, an array of values. If no settings
+		 * exist on an element, it defaults to false.
+		 **/
+		settings : function( str ) {
+			// no elements were selected
+			if ( this.length === 0 ) {
+				return false;
+			}
+			// the return array
+			var arr = [];
+			// loop through the elements
+			$(this).each(function() {
+				var settings = $(this).data('SimpleTimer.settings');
+				if ( settings === undefined ) {
+					// default to false
+					arr.push(false);
+				}else {
+					// add settings
+					arr.push(settings);
+				}
+			});
+
+			if ( this.length === 1 ) {
+				// return for one element
+				return arr[0];
+			}else {
+				// return for multiple selected elements
+				return arr;
+			}
+		},
+
+		/**
+		 * Get a specific setting passed in as a string.
+		 *
+		 * @method get.setting
+		 * @param {String} The name of a specific setting
+		 * @return {Mixed} Returns the value of the setting or, if there is more
+		 * than one element selected, an array of values. If no settings exist
+		 * on an element, it defaults to false.
+		 **/
+		setting : function( str ) {
+			// no elements were selected
+			if ( this.length === 0 ) {
+				return false;
+			}
+			// the return array
+			var arr = [];
+			// loop through the elements
+			$(this).each(function() {
+				var settings = $(this).data('SimpleTimer.settings');
+				if ( settings === undefined ||
+					 settings[str] === undefined ) {
+					// default to false
+					arr.push(false);
+				}else {
+					// add setting
+					arr.push(settings[str]);
+				}
+			});
+
+			if ( this.length === 1 ) {
+				// return for one element
+				return arr[0];
+			}else {
+				// return for multiple selected elements
+				return arr;
+			}
+		},
+
+		/**
+		 * Get the percentage  of how close the timer is to its duration on the
+		 * selected elements. The percentage is calculated based on the
+		 * increment and the duration. Thus, a smaller increment relative to
+		 * the duration will yield a more accurate percentage.
 		 *
 		 * @method get.percent
 		 * @return {Mixed} Returns a single floating point value between 0 and 1
@@ -119,12 +194,13 @@
 			if ( this.length === 0 ) {
 				return false;
 			}
-			// the array of percentages
+			// the return array
 			var arr = [];
 			// loop through the elements
 			$(this).each(function() {
 				var settings = $(this).data('SimpleTimer.settings');
 				if ( settings === undefined ) {
+					// default to false
 					arr.push(false);
 				}else {
 					// set percent to the nearest 1000th
@@ -176,10 +252,12 @@
 				// call method
 				if ( filters[method] ) {
 					// filtered method
-					filters[method].apply( filtered, arguments );
+					filters[method].apply( filtered,
+						Array.prototype.slice.call(arguments, 1) );
 				}else {
 					// unfiltered method
-					methods[method].apply( filtered, arguments );
+					methods[method].apply( filtered,
+						Array.prototype.slice.call(arguments, 1) );
 				}
 			}
 
@@ -415,7 +493,8 @@
 					method.substr(4);
 				if ( get[method] ) {
 					// getter functions (not chainable)
-					return get[method].call(this);
+					return get[method].apply( this,
+						Array.prototype.slice.call(arguments, 1) );
 				}else {
 					$.error('Simple Timer Error: getter function ' +  method +
 						' does not exist.');
@@ -433,8 +512,8 @@
 		}
 		// general exception
 		$.error('Simple Timer Error: the simple timer plugin expects at' +
-			'least 1 paramater passed for inititialization. The first ' +
-			'paramater must be of type "string" or "object"');
+			'least 1 paramater. The first paramater must be of type "string" ' +
+			'or "object"');
 	};
 
 	// jQuery object (get functions only)
@@ -446,14 +525,15 @@
 				method.substr(4);
 			if ( get[method] ) {
 				// getter functions (not chainable)
-				return get[method].call([]);
+					return get[method].apply( [],
+						Array.prototype.slice.call(arguments, 1) );
 			}else {
-				$.error('Simple Timer Error: getter function ' +  method +
-					' does not exist.');
+				$.error('Simple Timer Error: getter function "' +  method +
+					'" does not exist.');
 			}
 		}
 		// general exception
-		$.error('Simple Timer Error: direct calls to simpleTimer only work ' +
+		$.error('Simple Timer Error: direct calls to simpleTimer only works ' +
 			'with get functions');
 	};
 
