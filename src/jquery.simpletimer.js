@@ -3,7 +3,7 @@
 * @descripton       A jQuery plugin that adds a timer to an element with an
 *                   assigned interval and duration.
 *
-* @version          0.1.5
+* @version          0.1.6
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
@@ -206,6 +206,48 @@
 					// set percent to the nearest 1000th
 					arr.push(Math.round(settings.count /
 						settings.duration * 1000) / 1000);
+				}
+			});
+
+			if ( this.length === 1 ) {
+				// return for one element
+				return arr[0];
+			}else {
+				// return for multiple selected elements
+				return arr;
+			}
+		},
+
+		/**
+		 * Get a boolean indicating whether are not the timer is currently
+		 * timing.
+		 *
+		 * @method get.timing
+		 * @return {Mixed} Returns true if the timer is currently timing, false
+		 * otherwise. A single boolean is returned if one element was selected,
+		 * otherwise it returns an array of booleans. If an element has not been
+		 * initialized, the value defaults to false.
+		 **/
+		timing : function() {
+			// no elements were selected
+			if ( this.length === 0 ) {
+				return false;
+			}
+			// the return array
+			var arr = [];
+			// loop through the elements
+			$(this).each(function() {
+				var settings = $(this).data('SimpleTimer.settings');
+				if ( settings === undefined ) {
+					// default to false
+					arr.push(false);
+				}else {
+					// check the timeout setting
+					if ( settings.timeout === false ) {
+						arr.push(false);
+					}else {
+						arr.push(true);
+					}
 				}
 			});
 
