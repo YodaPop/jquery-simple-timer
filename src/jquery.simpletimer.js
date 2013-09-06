@@ -312,13 +312,16 @@
 		 * checks to see if any of the elements' timers are already timing.
 		 *
 		 * @method filters.start
-		 * @return {Boolean} Returns true if some of the selected jQuery objects
-		 * passed the filter, false if none of the objects passed
 		 * @chainable
 		 **/
 		start : function() {
 			var filtered = this.filter(function() {
 				var settings = $(this).data('SimpleTimer.settings');
+				// checks if the duration is set to 0 or less
+				if ( settings.duration <=0 ) {
+					// jump to the end
+					_count.call(this, settings);
+				}
 				// checks if the timer has already been started
 				if ( settings.timeout !== false ) {
 					return false;
@@ -338,8 +341,6 @@
 
 			// call start
 			methods.start.apply(filtered, arguments);
-
-			return true;
 		},
 
 		/**
@@ -489,8 +490,8 @@
 		 *
 		 * @method methods.update
 		 * @param {Object} options The options that will be used to override the
-		 * current options
-		 * @return {Object} The jQuery object's from which the method was called
+		 * current settings
+		 * @return {Object} The jQuery object(s) from which the method was called
 		 * @chainable
 		 **/
 		update : function( options ) {
@@ -522,7 +523,6 @@
 				$(this).removeData('SimpleTimer.settings');
 			});
 		},
-
 
 	};
 
