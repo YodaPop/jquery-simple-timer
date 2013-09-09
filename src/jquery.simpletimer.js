@@ -43,12 +43,14 @@
 	 * @param {Object} The settings the plugin was initialized with
 	 * @private
 	 **/
-	_time = function ( settings ) {
+	_time = function () {
+		// retrieve settings
+		var settings = $(this).data('SimpleTimer.settings');
 		// set timeout
 		if ( settings.timeout !== false ) {
 			var el = this;
 			settings.timeout = setTimeout( function() {
-				_count.call(el, settings);
+				_count.call(el);
 			}, settings.increment);
 		}
 	},
@@ -60,7 +62,9 @@
 	 * @param {Object} The settings the plugin was initialized with
 	 * @private
 	 **/
-	_count = function ( settings ) {
+	_count = function () {
+		// retrieve settings
+		var settings = $(this).data('SimpleTimer.settings');
 		// increase count
 		settings.count += settings.increment;
 		// on increment event
@@ -79,7 +83,7 @@
 			return true;
 		}
 		// timeout
-		_time.call(this, settings);
+		_time.call(this);
 	},
 
 	/**
@@ -320,7 +324,7 @@
 				// checks if the duration is set to 0 or less
 				if ( settings.duration <=0 ) {
 					// jump to the end
-					_count.call(this, settings);
+					_count.call(this);
 				}
 				// checks if the timer has already been started
 				if ( settings.timeout !== false ) {
@@ -435,7 +439,7 @@
 					settings.onStart.call(this, settings);
 				}
 				// start timing
-				_time.call(this, settings);
+				_time.call(this);
 			});
 		},
 
