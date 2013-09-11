@@ -73,17 +73,22 @@
 		}
 		// check complete
 		if ( settings.count >= settings.duration ) {
-			// stop timer
-			methods.stop.call($(this));
-			// on complete event
-			if( settings.onComplete ) {
-				settings.onComplete.call(this, settings);
-			}
-
-			return true;
+			_complete.call(this);
+		}else {
+			// timeout
+			_time.call(this);
 		}
-		// timeout
-		_time.call(this);
+	},
+
+	_complete = function () {
+		// retrieve settings
+		var settings = $(this).data('SimpleTimer.settings');
+		// stop timer
+		filters.stop.call($(this));
+		// on complete event
+		if( settings.onComplete ) {
+			settings.onComplete.call(this, settings);
+		}
 	},
 
 	/**
@@ -170,7 +175,7 @@
 				// checks if the duration is set to 0 or less
 				if ( settings.duration <=0 ) {
 					// jump to the end
-					_count.call(this);
+					_complete.call(this);
 				}
 				// checks if the timer has already been started
 				if ( settings.timeout !== false ) {
@@ -489,9 +494,7 @@
 				// retrieve settings
 				var settings = $(this).data('SimpleTimer.settings');
 				// stop the timer
-				if ( settings.timeout !== false ) {
-					methods.stop.call($(this));
-				}
+				filters.stop.call($(this));
 				// reset the count
 				settings.count = 0;
 				// on reset event
