@@ -3,7 +3,7 @@
 * @descripton       A jQuery plugin that adds a timer to an element with an
 *                   assigned interval and duration.
 *
-* @version          0.1.8
+* @version          0.1.9
 * @requires         Jquery 1.4+
 *
 * @author           Ben Gullotti
@@ -278,7 +278,7 @@
 		 **/
 		defaultSettings : function() {
 			// apply to each element
-			return _private.settings;
+			return $.extend({}, _private.settings);
 		},
 
 		/**
